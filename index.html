@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Adli Amadi · Portfolio</title>
+  <meta name="description" content="Adli Amadi: final-year Computer Science student at IIUM, designer, web and mobile developer, and video producer.">
+  <meta property="og:title" content="Adli Amadi · Portfolio">
+  <meta property="og:description" content="Computer Science student, designer, developer and video producer based in Selangor, Malaysia.">
+  <meta name="theme-color" content="#040507">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='9' fill='%230E0F12'/><text x='16' y='22' font-family='Arial' font-weight='700' font-size='16' text-anchor='middle' fill='%23FF8A3D'>A</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Gotham is a paid font; Montserrat is the closest free match and is used when Gotham isn't available. -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="styles.css?v=6">
+  <script>
+    document.documentElement.classList.add('js');
+  </script>
+</head>
+<body>
+  <canvas id="bg" aria-hidden="true"></canvas>
+  <div class="bg-fallback" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a href="#" class="logo" id="logo" aria-label="Back to top"></a>
+    <div class="topbar-right">
+      <a class="pill-link" href="#projects"><i class="ti ti-layout-grid" aria-hidden="true"></i><span>Work</span></a>
+      <a class="pill-link" href="#extracurricular"><i class="ti ti-photo" aria-hidden="true"></i><span>Activities</span></a>
+      <a class="pill-link" id="say-hi" href="#"><i class="ti ti-mail" aria-hidden="true"></i><span>Say hi</span></a>
+    </div>
+  </header>
+
+  <!-- The tiles are built from content.js by script.js -->
+  <main class="grid" id="grid"></main>
+
+  <noscript>
+    <p style="max-width:600px;margin:40px auto;padding:0 24px;color:#fff;font-family:sans-serif">
+      This portfolio needs JavaScript. You can reach me at adliamadi04@gmail.com.
+    </p>
+  </noscript>
+
+  <footer class="footer">
+    <span>© <span id="year">2026</span> <span id="footer-name"></span></span>
+    <span>Built with HTML, CSS and JavaScript</span>
+  </footer>
+
+  <dialog id="project-modal" aria-labelledby="modal-title">
+    <div class="modal-inner">
+      <button class="modal-close" aria-label="Close"><i class="ti ti-x" aria-hidden="true"></i></button>
+      <p class="label" id="modal-kind"></p>
+      <h2 id="modal-title"></h2>
+      <p id="modal-summary" class="lede"></p>
+      <ul id="modal-points" class="points"></ul>
+      <ul id="modal-chips" class="chips"></ul>
+      <a id="modal-link" class="btn primary" target="_blank" rel="noopener"><i class="ti ti-brand-github" aria-hidden="true"></i>View on GitHub</a>
+    </div>
+  </dialog>
+
+  <dialog id="gallery-modal" class="gallery" aria-labelledby="g-title">
+    <div class="gallery-inner">
+      <button class="modal-close" aria-label="Close"><i class="ti ti-x" aria-hidden="true"></i></button>
+      <div class="gallery-stage">
+        <img id="g-img" alt="">
+        <div class="gallery-empty" id="g-empty"><i class="ti ti-photo" aria-hidden="true"></i><span>Photos coming soon</span></div>
+        <button class="g-nav prev" id="g-prev" aria-label="Previous photo"><i class="ti ti-chevron-left" aria-hidden="true"></i></button>
+        <button class="g-nav next" id="g-next" aria-label="Next photo"><i class="ti ti-chevron-right" aria-hidden="true"></i></button>
+        <span class="g-counter" id="g-counter"></span>
+      </div>
+      <div class="gallery-thumbs" id="g-thumbs"></div>
+      <div class="gallery-text">
+        <p class="label" id="g-meta"></p>
+        <h2 id="g-title"></h2>
+        <p class="lede" id="g-desc"></p>
+      </div>
+    </div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="content.js?v=6"></script>
+  <script src="bg.js?v=6"></script>
+  <script src="script.js?v=6"></script>
+</body>
+</html>

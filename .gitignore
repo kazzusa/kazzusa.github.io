@@ -1,0 +1,14 @@
+# Files that stay on your computer and never go to GitHub
+
+# Your original CV (it has your phone number and photo). The site doesn't offer a CV.
+CV Adli - follow Iskandar.pdf
+
+# Editor backups and temporary files
+_editor/backups/
+*.js.tmp
+
+# Claude Code and system files
+.claude/
+Thumbs.db
+desktop.ini
+.DS_Store

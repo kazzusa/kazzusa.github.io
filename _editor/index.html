@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Portfolio editor</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='9' fill='%23FF8A3D'/><text x='16' y='22' font-family='Arial' font-weight='700' font-size='16' text-anchor='middle' fill='%230E0F12'>E</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="editor.css">
+</head>
+<body>
+  <header class="bar">
+    <div class="brand"><span class="logo-mark">E</span><div><strong>Portfolio editor</strong><small id="status">Loading…</small></div></div>
+    <div class="bar-actions">
+      <button class="btn ghost narrow-only" id="toggle-view"><i class="ti ti-eye"></i><span>Preview</span></button>
+      <button class="btn ghost" id="discard"><i class="ti ti-arrow-back-up"></i><span>Discard changes</span></button>
+      <a class="btn ghost" href="/" target="_blank" rel="noopener"><i class="ti ti-external-link"></i><span>Open site</span></a>
+      <button class="btn primary" id="save"><i class="ti ti-device-floppy"></i><span>Save</span></button>
+    </div>
+  </header>
+
+  <div class="layout" id="layout">
+    <aside class="form-pane">
+      <nav class="section-nav" id="section-nav" aria-label="Sections"></nav>
+      <div class="intro-card">
+        <i class="ti ti-bulb"></i>
+        <p>Changes show in the preview straight away. Click <strong>Save</strong> (or press Ctrl+S) to keep them. Every save also keeps a backup in <code>_editor/backups</code>.</p>
+      </div>
+      <form id="form" autocomplete="off" onsubmit="return false"></form>
+    </aside>
+
+    <section class="preview-pane">
+      <div class="preview-bar">
+        <span>Live preview</span>
+        <div class="seg" role="group" aria-label="Preview size">
+          <button class="is-on" data-size="desktop"><i class="ti ti-device-desktop"></i>Desktop</button>
+          <button data-size="phone"><i class="ti ti-device-mobile"></i>Phone</button>
+        </div>
+      </div>
+      <div class="frame-wrap" id="frame-wrap">
+        <iframe id="preview" title="Website preview" src="/"></iframe>
+      </div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="/content.js"></script>
+  <script src="editor.js"></script>
+</body>
+</html>

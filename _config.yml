@@ -1,0 +1,6 @@
+# Settings for GitHub Pages.
+# Folders starting with "_" (like _editor) are never published.
+# These files are kept in the repository but left off the public website too.
+exclude:
+  - "Edit website.bat"
+  - .gitignore
