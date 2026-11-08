@@ -536,14 +536,75 @@ async function save() {
     if (!res.ok) throw new Error(json.error || 'Save failed.');
     dirty = false;
     setStatus(`Saved at ${json.savedAt}`, 'saved');
-    toast('Saved');
+    toast('Saved. Click Publish when you want it on the live site.');
+    refreshPublish();
+    return true;
   } catch (e) {
     setStatus('Not saved', 'dirty');
     toast(`Couldn't save: ${e.message} Is the editor window still open?`, true);
+    return false;
   } finally {
     btn.disabled = false;
   }
 }
+
+/* ---------- Publish to the live website ---------- */
+let pubInfo = null;
+async function refreshPublish() {
+  try {
+    const res = await fetch('/api/publish-status');
+    pubInfo = await res.json();
+  } catch (e) {
+    pubInfo = null;
+  }
+  const waiting = pubInfo && pubInfo.ready && (pubInfo.files.length || pubInfo.unpushed);
+  $('#pub-dot').hidden = !waiting;
+  $('#publish').title = waiting ? 'You have saved changes that aren\'t on the live website yet' : 'The live website is up to date';
+}
+
+const FRIENDLY = { 'content.js': 'Your text, links and photo list' };
+function describe(file) {
+  if (FRIENDLY[file]) return FRIENDLY[file];
+  if (file.startsWith('assets/uploads/')) return `Photo: ${file.slice(15)}`;
+  return file;
+}
+
+async function publish() {
+  const btn = $('#publish');
+  if (btn.disabled) return;
+  if (dirty) {
+    if (!confirm('You have unsaved changes. Save them and publish?')) return;
+    if (!(await save())) return;
+  }
+  await refreshPublish();
+  if (!pubInfo) { toast('Couldn\'t reach the editor. Is its window still open?', true); return; }
+  if (!pubInfo.ready) { toast(pubInfo.error, true); return; }
+  const files = pubInfo.files;
+  if (!files.length && !pubInfo.unpushed) { toast('Nothing new to publish. The live site is up to date.'); return; }
+  const shown = files.slice(0, 12).map((f) => `  • ${describe(f)}`).join('\n');
+  const more = files.length > 12 ? `\n  …and ${files.length - 12} more` : '';
+  const list = files.length ? `These will be uploaded and visible to anyone:\n${shown}${more}\n\n` : 'Your last saved version will be uploaded.\n\n';
+  if (!confirm(`Publish to ${pubInfo.url || 'your website'}?\n\n${list}It shows up on the site about a minute later.`)) return;
+
+  btn.disabled = true;
+  btn.classList.add('busy');
+  setStatus('Publishing…');
+  try {
+    const res = await fetch('/api/publish', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(json.error || 'Publishing failed.');
+    setStatus(`Published at ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`, 'saved');
+    toast(json.nothing ? 'Nothing new to publish.' : 'Published. Your website updates in about a minute.');
+  } catch (e) {
+    setStatus('Not published', 'dirty');
+    toast(e.message, true);
+  } finally {
+    btn.disabled = false;
+    btn.classList.remove('busy');
+    refreshPublish();
+  }
+}
+$('#publish').addEventListener('click', publish);
 $('#save').addEventListener('click', save);
 document.addEventListener('keydown', (e) => {
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); save(); }
@@ -561,4 +622,5 @@ if (location.protocol === 'file:') {
   buildNav();
   buildForm();
   setStatus(window.SITE ? 'All changes saved' : 'content.js not found, starting empty', window.SITE ? 'saved' : 'dirty');
+  refreshPublish();
 }

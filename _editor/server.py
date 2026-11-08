@@ -8,10 +8,15 @@ and lets the editor save content.js and upload pictures into assets/uploads/.
 It only listens on your own computer (127.0.0.1), uses no extra packages,
 and is never part of the published website (GitHub Pages skips folders
 that start with an underscore).
+
+The Publish button uploads your saved changes to GitHub with git
+(add, commit, push). Files listed in .gitignore are never uploaded.
 """
 import json
+import os
 import re
 import shutil
+import subprocess
 import sys
 import threading
 import time
@@ -35,6 +40,43 @@ HEADER = (
     "// The easiest way to change it is the editor: double-click \"Edit website.bat\".\n"
     "// You can also edit it by hand; keep the same structure.\n"
 )
+
+
+PUBLISH_LOCK = threading.Lock()
+
+
+def git(*args, timeout=30, quiet=False):
+    """Run a git command in the portfolio folder and return (exit code, output)."""
+    env = dict(os.environ, GIT_TERMINAL_PROMPT="0")
+    try:
+        r = subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True,
+                           encoding="utf-8", errors="replace", timeout=timeout, env=env)
+    except FileNotFoundError:
+        return 127, "Git isn't installed."
+    except subprocess.TimeoutExpired:
+        return 124, "GitHub took too long to answer."
+    out = r.stdout if quiet else r.stdout + r.stderr
+    return r.returncode, out.rstrip()
+
+
+def site_url() -> str:
+    code, remote = git("remote", "get-url", "origin")
+    m = re.search(r"github\.com[/:]([^/]+)/([^/]+?)(?:\.git)?$", remote) if code == 0 else None
+    if not m:
+        return ""
+    owner, repo = m.group(1).lower(), m.group(2).lower()
+    return f"https://{repo}/" if repo == f"{owner}.github.io" else f"https://{owner}.github.io/{repo}/"
+
+
+def publish_status() -> dict:
+    code, _ = git("rev-parse", "--is-inside-work-tree")
+    if code != 0:
+        return {"ready": False, "error": "This folder isn't connected to GitHub yet."}
+    _, porcelain = git("status", "--porcelain", "--untracked-files=all", quiet=True)
+    files = [line[3:].strip().strip('"') for line in porcelain.splitlines() if line.strip()]
+    code, ahead = git("rev-list", "--count", "@{u}..HEAD", quiet=True)
+    unpushed = int(ahead) if code == 0 and ahead.isdigit() else 0
+    return {"ready": True, "files": files, "unpushed": unpushed, "url": site_url()}
 
 
 def slugify(name: str) -> str:
@@ -78,6 +120,13 @@ class Handler(SimpleHTTPRequestHandler):
             raise ValueError("File is empty or larger than 25 MB.")
         return self.rfile.read(length)
 
+    def do_GET(self):
+        if urlparse(self.path).path == "/api/publish-status":
+            if not self._allowed():
+                return self._json(403, {"error": "Not allowed."})
+            return self._json(200, publish_status())
+        return super().do_GET()
+
     def do_POST(self):
         if not self._allowed():
             return self._json(403, {"error": "Not allowed."})
@@ -87,6 +136,8 @@ class Handler(SimpleHTTPRequestHandler):
                 return self._save()
             if route.path == "/api/upload":
                 return self._upload(parse_qs(route.query))
+            if route.path == "/api/publish":
+                return self._publish()
         except ValueError as e:
             return self._json(400, {"error": str(e)})
         except Exception as e:  # noqa: BLE001 - report anything else to the editor
@@ -109,6 +160,38 @@ class Handler(SimpleHTTPRequestHandler):
         tmp.write_text(text, encoding="utf-8")
         tmp.replace(CONTENT)
         return self._json(200, {"ok": True, "savedAt": datetime.now().strftime("%H:%M:%S")})
+
+    def _publish(self):
+        if not PUBLISH_LOCK.acquire(blocking=False):
+            raise ValueError("Already publishing. Give it a moment.")
+        try:
+            status = publish_status()
+            if not status["ready"]:
+                raise ValueError(status["error"])
+            if not status["files"] and not status["unpushed"]:
+                return self._json(200, {"ok": True, "nothing": True, "url": status["url"]})
+            if status["files"]:
+                code, out = git("add", "-A")
+                if code != 0:
+                    raise ValueError(f"Couldn't prepare the files: {out}")
+                stamp = datetime.now().strftime("%d %b %Y, %H:%M")
+                code, out = git("commit", "-m", f"Update website ({stamp})")
+                if code != 0:
+                    raise ValueError(f"Couldn't save a version: {out}")
+            code, out = git("push", "origin", "HEAD", timeout=180)
+            if code != 0:
+                hint = ""
+                if re.search(r"auth|credential|403|denied", out, re.I):
+                    hint = " Sign in to GitHub again when the window pops up, then retry."
+                elif re.search(r"rejected|fetch first|non-fast-forward", out, re.I):
+                    hint = " The website on GitHub has changes this computer doesn't have. Ask for help before retrying."
+                elif re.search(r"resolve host|network|timed out|too long", out, re.I):
+                    hint = " Check your internet connection and retry."
+                raise ValueError(f"Upload to GitHub failed.{hint} Your changes are saved on this computer.")
+            print("  Published to GitHub.")
+            return self._json(200, {"ok": True, "count": len(status["files"]), "url": status["url"]})
+        finally:
+            PUBLISH_LOCK.release()
 
     def _upload(self, query):
         original = (query.get("name") or ["file"])[0]
