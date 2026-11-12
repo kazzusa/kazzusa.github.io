@@ -59,11 +59,6 @@ body {
   -webkit-font-smoothing: antialiased;
   overflow-x: clip;
 }
-/* paper grain */
-body::before {
-  content: ""; position: fixed; inset: 0; z-index: -2; pointer-events: none; opacity: .5;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .38 0 0 0 0 .28 0 0 0 .32 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
 h1, h2, h3 { font-family: var(--hand); font-weight: 700; margin: 0; line-height: 1.05; letter-spacing: 0; }
 p { margin: 0; }
 a { color: inherit; text-decoration: none; }
@@ -73,27 +68,10 @@ button { font: inherit; color: inherit; cursor: pointer; }
 
 .fx { position: absolute; width: 0; height: 0; overflow: hidden; }
 
-/* ---------- Doodles in the background ---------- */
-.doodles { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
-.d {
-  position: absolute; fill: none; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round;
-  filter: url(#crayon); opacity: .75;
-}
-.d-star     { width: 70px;  top: 13%;  left: 2.5%;  stroke: var(--yellow); fill: rgba(249, 200, 14, .35); transform: rotate(-12deg); }
-.d-sun      { width: 96px;  top: 4%;   right: 3%;   stroke: var(--orange); }
-.d-spiral   { width: 80px;  top: 46%;  right: 2%;   stroke: var(--blue); }
-.d-squiggle { width: 150px; top: 58%;  left: 1%;    stroke: var(--pink); transform: rotate(-8deg); }
-.d-heart    { width: 54px;  bottom: 9%; left: 4%;   stroke: var(--red); fill: rgba(229, 83, 61, .2); transform: rotate(10deg); }
-.d-plane    { width: 90px;  bottom: 6%; right: 4%;  stroke: var(--purple); }
-.d-cloud    { width: 120px; top: 30%;  left: 1.5%;  stroke: var(--blue); opacity: .45; }
-.d-zig      { width: 110px; top: 80%;  right: 3%;   stroke: var(--green); opacity: .55; }
-@media (max-width: 1300px) { .d-cloud, .d-squiggle, .d-zig { display: none; } }
-@media (max-width: 900px) { .d { opacity: .35; } .d-spiral, .d-heart { display: none; } }
-
 /* ---------- Hand-drawn card (shared) ----------
    The card shape is drawn on ::before with the crayon filter,
    so text and pictures on top stay sharp. A solid backing sits just
-   inside it so the crayon grain doesn't let the doodles show through. */
+   inside it so the crayon grain doesn't make the card see-through. */
 .tile, .pill-link { position: relative; }
 .tile, dialog {
   border: 4px solid transparent;
