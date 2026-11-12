@@ -121,12 +121,6 @@ const SCHEMA = [
     ]
   },
   {
-    id: 'robotics', title: 'Robotics', icon: 'ti-robot', fields: [
-      { k: 'count', label: 'Number shown' },
-      { k: 'note', label: 'Note under the number' }
-    ]
-  },
-  {
     id: 'languages', title: 'Languages', icon: 'ti-language', list: true,
     itemName: (x) => x.name || 'New language', itemSub: (x) => `${x.level ?? 0}%`,
     blank: () => ({ name: '', level: 50 }),

@@ -261,10 +261,6 @@ window.SITE = {
       "year": "2024"
     }
   ],
-  "robotics": {
-    "count": "3",
-    "note": "International robotics competitions"
-  },
   "languages": [
     {
       "name": "Malay",

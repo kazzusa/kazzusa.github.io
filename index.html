@@ -7,21 +7,45 @@
   <meta name="description" content="Adli Amadi: final-year Computer Science student at IIUM, designer, web and mobile developer, and video producer.">
   <meta property="og:title" content="Adli Amadi · Portfolio">
   <meta property="og:description" content="Computer Science student, designer, developer and video producer based in Selangor, Malaysia.">
-  <meta name="theme-color" content="#040507">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='9' fill='%230E0F12'/><text x='16' y='22' font-family='Arial' font-weight='700' font-size='16' text-anchor='middle' fill='%23FF8A3D'>A</text></svg>">
+  <meta name="theme-color" content="#FBF5E6">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path d='M5 7 Q4 3 9 4 L25 3 Q29 3 28 8 L29 24 Q29 29 24 28 L8 29 Q3 29 4 24 Z' fill='%23F9C80E' stroke='%232D2A32' stroke-width='2.2'/><text x='16' y='23' font-family='Comic Sans MS,cursive' font-weight='700' font-size='18' text-anchor='middle' fill='%232D2A32'>a</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Gotham is a paid font; Montserrat is the closest free match and is used when Gotham isn't available. -->
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Hand-drawn fonts: Gaegu for headings, Patrick Hand for text, Cabin Sketch for big numbers -->
+  <link href="https://fonts.googleapis.com/css2?family=Cabin+Sketch:wght@700&family=Gaegu:wght@400;700&family=Patrick+Hand&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
-  <link rel="stylesheet" href="styles.css?v=6">
+  <link rel="stylesheet" href="styles.css?v=9">
   <script>
     document.documentElement.classList.add('js');
   </script>
 </head>
 <body>
-  <canvas id="bg" aria-hidden="true"></canvas>
-  <div class="bg-fallback" aria-hidden="true"></div>
+  <!-- Crayon effects: "rough" wobbles edges, "crayon" also adds the waxy grain -->
+  <svg class="fx" aria-hidden="true" focusable="false">
+    <filter id="rough" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.025" numOctaves="2" seed="4" result="warp"/>
+      <feDisplacementMap in="SourceGraphic" in2="warp" scale="5" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="crayon" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.025" numOctaves="2" seed="4" result="warp"/>
+      <feDisplacementMap in="SourceGraphic" in2="warp" scale="5" xChannelSelector="R" yChannelSelector="G" result="wobbly"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="1" seed="9" result="grain"/>
+      <feColorMatrix in="grain" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -1.7 0 0 0 1.55" result="mask"/>
+      <feComposite in="wobbly" in2="mask" operator="in"/>
+    </filter>
+  </svg>
+
+  <!-- Doodles scribbled around the page -->
+  <div class="doodles" aria-hidden="true">
+    <svg class="d d-star" viewBox="0 0 100 100"><path d="M50 8 L61 38 L93 39 L67 58 L77 90 L50 71 L23 90 L33 58 L7 39 L39 38 Z"/></svg>
+    <svg class="d d-sun" viewBox="0 0 120 120"><circle cx="60" cy="60" r="24"/><path d="M60 14v14M60 92v14M14 60h14M92 60h14M27 27l10 10M83 83l10 10M93 27L83 37M37 83L27 93"/></svg>
+    <svg class="d d-spiral" viewBox="0 0 100 100"><path d="M52 50c0-4 6-5 8-1 3 6-3 12-10 11-10-1-14-12-9-20 7-11 24-10 30 1 8 14-2 31-18 32-19 2-33-15-29-33 4-20 27-30 45-21"/></svg>
+    <svg class="d d-squiggle" viewBox="0 0 200 40"><path d="M5 25c15-22 28 18 45 0s28-20 45 0 30 18 45 0 30-20 50 0"/></svg>
+    <svg class="d d-heart" viewBox="0 0 100 100"><path d="M50 84C20 62 8 46 12 30c4-15 24-20 38-2 14-18 34-13 38 2 4 16-8 32-38 54Z"/></svg>
+    <svg class="d d-plane" viewBox="0 0 120 100"><path d="M8 48 112 10 82 90 58 62 8 48ZM58 62l54-52M58 62l-6 26 18-16"/></svg>
+    <svg class="d d-cloud" viewBox="0 0 140 80"><path d="M30 66c-16 0-24-16-13-26 2-16 22-20 30-9 6-17 34-18 40 0 14-6 30 4 26 18 12 6 6 18-6 17Z"/></svg>
+    <svg class="d d-zig" viewBox="0 0 120 40"><path d="M4 30 18 8 32 30 46 8 60 30 74 8 88 30 102 8 116 30"/></svg>
+  </div>
 
   <header class="topbar">
     <a href="#" class="logo" id="logo" aria-label="Back to top"></a>
@@ -36,7 +60,7 @@
   <main class="grid" id="grid"></main>
 
   <noscript>
-    <p style="max-width:600px;margin:40px auto;padding:0 24px;color:#fff;font-family:sans-serif">
+    <p style="max-width:600px;margin:40px auto;padding:0 24px;color:#2D2A32;font-family:sans-serif">
       This portfolio needs JavaScript. You can reach me at adliamadi04@gmail.com.
     </p>
   </noscript>
@@ -79,8 +103,7 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script src="content.js?v=6"></script>
-  <script src="bg.js?v=6"></script>
-  <script src="script.js?v=6"></script>
+  <script src="content.js?v=9"></script>
+  <script src="script.js?v=9"></script>
 </body>
 </html>

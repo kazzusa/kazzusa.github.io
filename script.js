@@ -200,36 +200,18 @@ function render() {
       </ul>
     </section>`);
 
-  // Robotics
-  const rb = SITE.robotics || {};
-  if (rb.count) tiles.push(`
-    <section class="tile robotics tint-mint">
-      <p class="label">Robotics</p>
-      <p class="big-num"><span ${isNaN(parseFloat(rb.count)) ? '' : `data-count="${parseFloat(rb.count)}" data-decimals="0"`}>${esc(rb.count)}</span></p>
-      <p class="muted">${esc(rb.note)}</p>
-      <i class="ti ti-robot tile-icon" aria-hidden="true"></i>
-    </section>`);
-
-  // Clock
-  tiles.push(`
-    <section class="tile clock">
-      <p class="label">Local time</p>
-      <p class="time" id="clock">--:--</p>
-      <p class="muted">Kuala Lumpur · GMT+8</p>
-    </section>`);
-
-  // Showreel
+  // Showreel (full width; Leadership and Languages share the row above it)
   if (l.showreel) tiles.push(`
-    <a class="tile media w2 invert" href="${url(l.showreel)}" target="_blank" rel="noopener">
+    <a class="tile media w4 invert" href="${url(l.showreel)}" target="_blank" rel="noopener">
       <div class="media-text">
         <p class="label">Showreel</p>
         <h2>${esc(l.showreelTitle)}</h2>
         <p class="muted">${esc(l.showreelSubtitle)}</p>
       </div>
       <div class="editor" aria-hidden="true">
-        <div class="track"><span style="--w:30%;--c:#8FD6EE"></span><span style="--w:22%;--c:#C9CDD4"></span><span style="--w:36%;--c:#FF8A3D"></span></div>
-        <div class="track"><span style="--w:18%;--c:#FFC060"></span><span style="--w:44%;--c:#6FA8C4"></span><span style="--w:20%;--c:#E8552C"></span></div>
-        <div class="track audio"><span style="--w:92%;--c:#9AA3AE"></span></div>
+        <div class="track"><span style="--w:30%;--c:#7DB9E8"></span><span style="--w:22%;--c:#F7A8C4"></span><span style="--w:36%;--c:#F9C80E"></span></div>
+        <div class="track"><span style="--w:18%;--c:#8FD9A8"></span><span style="--w:44%;--c:#F28C28"></span><span style="--w:20%;--c:#B79CE6"></span></div>
+        <div class="track audio"><span style="--w:92%;--c:#E8E2D0"></span></div>
         <div class="playhead"></div>
       </div>
       <span class="play"><i class="ti ti-player-play" aria-hidden="true"></i></span>
@@ -548,18 +530,6 @@ gallery.addEventListener('keydown', (e) => {
   d.querySelector('.modal-close').addEventListener('click', () => d.close());
   d.addEventListener('click', (e) => { if (e.target === d) d.close(); });
 });
-
-/* ---------- Live clock (Kuala Lumpur) ---------- */
-const clockEl = document.getElementById('clock');
-function tick() {
-  const parts = new Intl.DateTimeFormat('en-GB', {
-    hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'Asia/Kuala_Lumpur'
-  }).formatToParts(new Date());
-  const get = (t) => (parts.find((p) => p.type === t) || {}).value || '';
-  clockEl.innerHTML = `${get('hour')}:${get('minute')}<small>${get('dayPeriod').toUpperCase()}</small>`;
-}
-tick();
-setInterval(tick, 15000);
 
 /* ---------- Copy email ---------- */
 const toast = document.getElementById('toast');
